@@ -44,9 +44,7 @@ jobs:
           PORT: 3000
 
       - name: Wait for Server to Start
-        run: |
-          npx wait-on http://localhost:3000
-          sleep 5  # Retraso adicional
+        run: npx wait-on http://localhost:3000
 
       - name: Run End-to-End Tests
         run: npx playwright test
