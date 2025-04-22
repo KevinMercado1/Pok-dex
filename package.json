@@ -10,7 +10,7 @@
     "lint": "eslint './**/*.{js,jsx}'",
     "format": "prettier --write .",
     "build": "webpack --mode production",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test --config=playwright.config.js"
   },
   "repository": {
     "type": "git",
