@@ -7,6 +7,6 @@ export default defineConfig({
     command: 'npm run start-prod',
     port: 3000,
     timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 });
