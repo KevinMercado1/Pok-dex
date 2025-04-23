@@ -38,8 +38,8 @@ jobs:
       - name: Build App
         run: npm run build
 
-      - name: Start Development Server
-        run: npm start &
+      - name: Start Production Server
+        run: npm run start-prod &
         env:
           PORT: 3000
 
@@ -47,6 +47,6 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: Run End-to-End Tests
-        run: npx playwright test
+        run: npm run test:e2e
         env:
           CI: true
