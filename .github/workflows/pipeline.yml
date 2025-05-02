@@ -38,18 +38,7 @@ jobs:
       - name: Build App
         run: npm run build
 
-      - name: Start Development Server
-        run: npm start &
-        env:
-          PORT: 3000
-
-      - name: Wait for Server to Start
-        run: npx wait-on http://localhost:3000
-
       - name: Run End-to-End Tests
-        run: npx playwright test
+        run: npm run test:e2e
         env:
           CI: true
-
-      - name: Stop Development Server
-        run: kill $(lsof -t -i:3000) || true
