@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Full Stack Open",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "start": "webpack-dev-server --open --mode development",
     "start-prod": "serve -s build",
@@ -10,7 +14,11 @@
     "lint": "eslint './**/*.{js,jsx}'",
     "format": "prettier --write .",
     "build": "webpack --mode production",
-    "test:e2e": "playwright test --config=playwright.config.js"
+    "test:e2e": "playwright test --config=playwright.config.js",
+    "check-env": "node -e \"console.log('Node: ' + process.version + '\\nEnvironment: ' + process.env.NODE_ENV)\"",
+    "pretest:e2e": "npm run build",
+    "debug:e2e": "cross-env DEBUG=pw:api,pw:browser* npm run test:e2e",
+    "verify-build": "node -e \"const fs=require('fs'); console.log('Build directory exists:', fs.existsSync('./build')); console.log('Bundle exists:', fs.existsSync('./build/bundle.js'))\""
   },
   "repository": {
     "type": "git",
@@ -52,7 +60,8 @@
     "style-loader": "^3.3.3",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^4.15.1",
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
@@ -66,6 +75,18 @@
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "e2e-tests"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   }
 }
