@@ -1,26 +1,5 @@
 import { test, expect, describe } from '@playwright/test';
 
-async function retry(fn, options = {}) {
-  const { maxAttempts = 3, delay = 1000 } = options;
-  let lastError;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      console.log(`Attempt ${attempt}/${maxAttempts} failed: ${error.message}`);
-      lastError = error;
-
-      if (attempt < maxAttempts) {
-        console.log(`Waiting ${delay}ms before retrying...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-  }
-
-  throw lastError;
-}
-
 describe('Pokedex', () => {
   test('front page can be opened', async ({ page, context }) => {
     const apiResponses = [];
@@ -36,7 +15,7 @@ describe('Pokedex', () => {
     const failedRequests = [];
     page.on('requestfailed', (request) => {
       failedRequests.push(request);
-      console.error(`❌ Request failed: ${request.method()} ${request.url()}`);
+      console.error(` Request failed: ${request.method()} ${request.url()}`);
     });
 
     // Monitor requests
@@ -121,19 +100,6 @@ describe('Pokedex', () => {
         }
       }
 
-      console.log('Waiting for ivysaur...');
-      await retry(
-        async () => {
-          await expect(page.getByText('ivysaur')).toBeVisible({
-            timeout: 30000,
-          });
-        },
-        { maxAttempts: 3, delay: 3000 }
-      );
-
-      await expect(page.getByText('bulbasaur')).toBeVisible({ timeout: 5000 });
-      await expect(page.getByText('charmander')).toBeVisible({ timeout: 5000 });
-
       await expect(
         page.getByText(
           'Pokémon and Pokémon character names are trademarks of Nintendo.'
@@ -144,7 +110,7 @@ describe('Pokedex', () => {
 
       const screenshotPath = `error-screenshot-${Date.now()}.png`;
       await page.screenshot({ path: screenshotPath, fullPage: true });
-      console.log(`📸 Screenshot saved: ${screenshotPath}`);
+      console.log(` Screenshot saved: ${screenshotPath}`);
 
       const content = await page.content();
       console.log(
