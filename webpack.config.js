@@ -7,6 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/',
+    command: 'npm run build && npm run start-prod',
   },
   module: {
     rules: [
