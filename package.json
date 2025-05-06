@@ -2,7 +2,7 @@
   "name": "fullstackopen-cicd",
   "version": "1.0.0",
   "description": "Full Stack Open",
-  "main": "src/index.js",
+  "main": "app.js",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
