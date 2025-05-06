@@ -4,10 +4,9 @@ const path = require('path');
 module.exports = {
   entry: './src/index.jsx',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
     publicPath: '/',
-    command: 'npm run build && npm run start-prod',
   },
   module: {
     rules: [
