@@ -2,14 +2,14 @@
   "name": "fullstackopen-cicd",
   "version": "1.0.0",
   "description": "Full Stack Open",
-  "main": "src/index.js",
+  "main": "app.js",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "scripts": {
-    "start": "webpack-dev-server --open --mode development",
-    "start-prod": "serve -s build",
+    "start": "node app.js",
+    "start-prod": "serve -s dist",
     "test": "jest",
     "lint": "eslint './**/*.{js,jsx}'",
     "format": "prettier --write .",
