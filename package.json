@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --open --mode development",
-    "start-prod": "serve -s build",
+    "start-prod": "serve -s dist",
     "test": "jest",
     "lint": "eslint './**/*.{js,jsx}'",
     "format": "prettier --write .",
