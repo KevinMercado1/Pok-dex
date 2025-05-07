@@ -18,7 +18,8 @@
     "check-env": "node -e \"console.log('Node: ' + process.version + '\\nEnvironment: ' + process.env.NODE_ENV)\"",
     "pretest:e2e": "npm run build",
     "debug:e2e": "cross-env DEBUG=pw:api,pw:browser* npm run test:e2e",
-    "verify-build": "node -e \"const fs=require('fs'); console.log('Build directory exists:', fs.existsSync('./build')); console.log('Bundle exists:', fs.existsSync('./build/bundle.js'))\""
+    "verify-build": "node -e \"const fs=require('fs'); console.log('Build directory exists:', fs.existsSync('./build')); console.log('Bundle exists:', fs.existsSync('./build/bundle.js'))\"",
+    "deploy": "curl -X POST $RENDER_DEPLOY_HOOK_URL"
   },
   "repository": {
     "type": "git",
