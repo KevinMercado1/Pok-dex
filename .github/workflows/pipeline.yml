@@ -1,19 +1,14 @@
-name: Deployment pipeline
+name: CI Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
-    runs-on: ubuntu-20.04
-
-    outputs:
-      skip_deploy: ${{ steps.check_skip.outputs.skip }}
+  lint-test-build:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -43,29 +38,7 @@ jobs:
       - name: Build App
         run: npm run build
 
-      - name: Set SKIP_TAG_DEPLOY
-        id: check_skip
-        run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            git log -1 --pretty=%B | grep -q "#skip" && echo "skip=true" >> $GITHUB_OUTPUT || echo "skip=false" >> $GITHUB_OUTPUT
-          fi
-            echo "skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Deploy to Render
-        run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
-        if: ${{ github.event_name != 'pull_request' && steps.check_skip.outputs.skip != 'true' }}
-
-  tag_release:
-    needs: [simple_deployment_pipeline]
-    runs-on: ubuntu-20.04
-    if: ${{ github.event_name != 'pull_request' && needs.simple_deployment_pipeline.outputs.skip_deploy != 'true' }}
-
-    steps:
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.64.0
+      - name: Run End-to-End Tests
+        run: npm run test:e2e
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+          CI: true
