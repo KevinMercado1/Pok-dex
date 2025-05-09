@@ -1,0 +1,76 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-20.04
+    outputs:
+      SKIP_TAG_DEPLOY: ${{ steps.check_skip.outputs.SKIP_TAG_DEPLOY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for #skip in commit message
+        id: check_skip
+        run: |
+          if git log -1 --pretty=%B | grep -q '#skip'; then
+            echo "::set-output name=SKIP_TAG_DEPLOY::true"
+          else
+            echo "::set-output name=SKIP_TAG_DEPLOY::false"
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Linter
+        run: npm run lint
+        env:
+          CI: true
+
+      - name: Run Tests
+        run: npm test
+        env:
+          CI: true
+
+      - name: Build App
+        run: npm run build
+
+  deploy_to_render:
+    needs: simple_deployment_pipeline
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name != 'pull_request' && needs.simple_deployment_pipeline.outputs.SKIP_TAG_DEPLOY == 'false' }}
+
+    steps:
+      - name: Deploy to Render
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  tag_release:
+    needs: simple_deployment_pipeline
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name != 'pull_request' && needs.simple_deployment_pipeline.outputs.SKIP_TAG_DEPLOY != 'true' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_BUMP: patch
