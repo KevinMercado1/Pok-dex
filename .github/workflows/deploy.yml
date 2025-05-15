@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -24,3 +26,36 @@ jobs:
 
       - name: Trigger Render Deploy
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+
+    steps:
+      - name: Notify Discord on success
+        if: ${{ needs.deploy.result == 'success' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: success
+          title: Deployment succeeded!
+          description: |
+            ✅ Deployment succeeded!
+            Repo: `${{ github.repository }}`
+            Commit: `${{ github.sha }}`
+            Author: `${{ github.actor }}`
+
+      - name: Notify Discord on failure
+        if: ${{ needs.deploy.result == 'failure' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: failure
+          title: Deployment failed!
+          description: |
+            ❌ Deployment failed!
+            Repo: `${{ github.repository }}`
+            Commit: `${{ github.sha }}`
+            Author: `${{ github.actor }}`
+            Message: `${{ github.event.head_commit.message }}`
