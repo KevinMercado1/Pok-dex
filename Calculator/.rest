@@ -1,3 +1,0 @@
-curl -X POST http://localhost:3003/exercises \
-  -H "Content-Type: application/json" \
-  -d '{"daily_exercises": [30, 40, 50, 60], "target": 180}'
